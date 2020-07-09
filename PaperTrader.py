@@ -1,12 +1,47 @@
-import requests
+import requests, json
 import time
 from PaperConfig import * #contains api keys
 
 BASE_URL = "https://paper-api.alpaca.markets" #the main endpoint for requests
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL) #endpoint for account details
+ORDERS_URL = "{}/v2/orders".format(BASE_URL)
+HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
+
 
 #get request for account data associated with API keys in PaperConfig
-r = requests.get(ACCOUNT_URL, headers={'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}) 
+def get_account():
+    r = requests.get(ACCOUNT_URL, headers=HEADERS) 
+    return json.loads(r.content)
+
+def create_order(symbol, qty, side, type, time_in_force): #create order dictionary
+        data = {
+            "symbol": symbol,
+            "qty": qty,
+            "side": side,
+            "type": type,
+            "time_in_force": time_in_force
+
+        }
+
+        r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
+        
+        return json.loads(r.content)
+    
+
+
+    
+def get_orders():
+        r = requests.get(ORDERS_URL, headers=HEADERS)
+        
+        return json.loads(r.content)
+
+#response = create_order("AAPL", 1, "buy", "market", "gtc") #creates order - codes need to be in order (AMZN = symbol etc).
+#response = create_order("MSFT", 10, "buy", "market", "gtc")
+
+#pulls get_orders data
+orders = get_orders()
+#prints it
+print(orders)
 
 #prints out the content of r
-print(r.content)
+#print(response)
