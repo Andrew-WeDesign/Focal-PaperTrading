@@ -4,15 +4,16 @@ from PaperConfig import * #contains api keys
 
 BASE_URL = "https://paper-api.alpaca.markets" #the main endpoint for requests
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL) #endpoint for account details
-ORDERS_URL = "{}/v2/orders".format(BASE_URL)
-HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
+ORDERS_URL = "{}/v2/orders".format(BASE_URL) #endpoint for orders
+HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY} #required for each request
 
 #get request for account data associated with API keys in PaperConfig
 def get_account():
     r = requests.get(ACCOUNT_URL, headers=HEADERS)
     return json.loads(r.content)
 
-def create_order(symbol, qty, side, type, time_in_force): #create order dictionary
+#creates a new order
+def create_order(symbol, qty, side, type, time_in_force):
         data = {
             "symbol": symbol,
             "qty": qty,
@@ -24,7 +25,8 @@ def create_order(symbol, qty, side, type, time_in_force): #create order dictiona
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         
         return json.loads(r.content)
-    
+
+#returns a list of all orders
 def get_orders():
         r = requests.get(ORDERS_URL, headers=HEADERS)
         
