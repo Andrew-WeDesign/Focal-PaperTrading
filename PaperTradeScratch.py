@@ -12,10 +12,10 @@ HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY} #requi
 
 class AlgoTrader:
     def __init__(self):
-        self.alpaca = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL, api_version = 'v2')
+        self.alpaca = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL, api_version = 'v2') #makes API calls shorter/easy to write
+        stockUniverse = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT',
+         'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'RTN', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', ]
         
-        stockUniverse = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'RTN', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', ]
-        # Format the allStocks variable for use in the class.
         self.allStocks = []
         for stock in stockUniverse:
             self.allStocks.append([stock, 0])
@@ -35,9 +35,9 @@ class AlgoTrader:
         # First, cancel any existing orders so they don't impact our buying power.
         orders = self.alpaca.list_orders(status="open")
         for order in orders:
-            self.alpaca.cancel_order(order.id)
-
-        # Wait for market to open.
+            self.alpaca.cancel_order(order.id) # Might also be able to use: self.alpaca.cancel_all_orders
+        
+        #wait for market to open
         print("Waiting for market to open...")
         tAMO = threading.Thread(target=self.awaitMarketOpen)
         tAMO.start()
@@ -51,7 +51,7 @@ class AlgoTrader:
             closingTime = clock.next_close.replace(tzinfo=datetime.timezone.utc).timestamp()
             currTime = clock.timestamp.replace(tzinfo=datetime.timezone.utc).timestamp()
             self.timeToClose = closingTime - currTime
-
+        
             if(self.timeToClose < (60 * 15)):
                 # Close all positions when 15 minutes til market close.
                 print("Market closing soon.  Closing positions.")
@@ -63,7 +63,7 @@ class AlgoTrader:
                     else:
                         orderSide = 'buy'
                     qty = abs(int(float(position.qty)))
-                    respSO = []
+                    respSO =[] # Not sure about this 
                     tSubmitOrder = threading.Thread(target=self.submitOrder(qty, position.symbol, orderSide, respSO))
                     tSubmitOrder.start()
                     tSubmitOrder.join()
@@ -71,6 +71,7 @@ class AlgoTrader:
                 # Run script again after market close for next trading day.
                 print("Sleeping until market close (15 minutes).")
                 time.sleep(60 * 15)
+
             else:
                 # Rebalance the portfolio.
                 tRebalance = threading.Thread(target=self.rebalance)
@@ -102,7 +103,8 @@ class AlgoTrader:
 
         print("We are taking a long position in: " + str(self.long))
         print("We are taking a short position in: " + str(self.short))
-        # Remove positions that are no longer in the short or long list, and make a list of positions that do not need to change.  Adjust position quantities if needed.
+        # Remove positions that are no longer in the short or long list, and make a list of positions that do not need to change.
+        # Adjust position quantities if needed.
         executed = [[], []]
         positions = self.alpaca.list_positions()
         self.blacklist.clear()
@@ -110,7 +112,7 @@ class AlgoTrader:
             if(self.long.count(position.symbol) == 0):
                 # Position is not in long list.
                 if(self.short.count(position.symbol) == 0):
-                    # Position not in short list either.  Clear position.
+                    # Position not in short list either. Clear position.
                     if(position.side == "long"):
                         side = "sell"
                     else:
@@ -120,17 +122,17 @@ class AlgoTrader:
                 tSO.start()
                 tSO.join()
             else:
-                # Position in short list.
+                # Position in short list
                 if(position.side == "long"):
-                    # Position changed from long to short.  Clear long position to prepare for short position.
+                    # Position changed from long to short. Clear long position to prepare for short position.
                     side = "sell"
                     respSO = []
-                    tSO = threading.Thread(target=self.submitOrder, args=[int(float(position.qty)), position.symbol, side, respSO])
+                    tSO = threading.Thread(target=self.submitOrder, args=[(int(float(position.qty))), position.symbol, side, respSO])
                     tSO.start()
                     tSO.join()
                 else:
                     if(abs(int(float(position.qty))) == self.qShort):
-                        # Position is where we want it.  Pass for now.
+                        # Position is where we want it. Pass for Now.
                         pass
                     else:
                         # Need to adjust position amount
@@ -151,22 +153,22 @@ class AlgoTrader:
             # Position in long list.
             if(position.side == "short"):
                 # Position changed from short to long.  Clear short position to prepare for long position.
-                respSO = []
-                tSO = threading.Thread(target=self.submitOrder, args=[abs(int(float(position.qty))), position.symbol, "buy", respSO])
+                respSO =[]
+                tSO = threading.Thread(target=self.submitOrder, args=[abs(diff), position.symbol, side, respSO])
                 tSO.start()
                 tSO.join()
             else:
                 if(int(float(position.qty)) == self.qLong):
-                    # Position is where we want it.  Pass for now.
+                    # Position is where we want it. Pass for now.
                     pass
                 else:
                     # Need to adjust position amount.
                     diff = abs(int(float(position.qty))) - self.qLong
                     if(diff > 0):
-                        # Too many long positions.  Sell some to rebalance.
+                        # Too many long positions. Sell some to rebalance.
                         side = "sell"
                     else:
-                        # Too little long positions.  Buy some more.
+                        # Too little long positions. Buy some more.
                         side = "buy"
                         respSO = []
                     tSO = threading.Thread(target=self.submitOrder, args=[abs(diff), position.symbol, side, respSO])
@@ -194,18 +196,18 @@ class AlgoTrader:
         else:
             self.adjustedQLong = -1
 
-        respSendBOShort = []
+        respSendBOShort =[]
         tSendBOShort = threading.Thread(target=self.sendBatchOrder, args=[self.qShort, self.short, "sell", respSendBOShort])
         tSendBOShort.start()
         tSendBOShort.join()
-        respSendBOShort[0][0] += executed[1]
+        respSendBOShort[0][0] += executed[0]
         if(len(respSendBOShort[0][1]) > 0):
             # Handle rejected/incomplete orders and determine new quantities to purchase.
             respGetTPShort = []
             tGetTPShort = threading.Thread(target=self.getTotalPrice, args=[respSendBOShort[0][0], respGetTPShort])
             tGetTPShort.start()
             tGetTPShort.join()
-            if(respGetTPShort[0] > 0):
+            if (respGetTPShort[0] > 0):
                 self.adjustedQShort = self.shortAmount // respGetTPShort[0]
             else:
                 self.adjustedQShort = -1
@@ -213,14 +215,14 @@ class AlgoTrader:
             self.adjustedQShort = -1
 
         # Reorder stocks that didn't throw an error so that the equity quota is reached.
-        if(self.adjustedQLong > -1):
+        if(self.adjsutedQLong > -1):
             self.qLong = int(self.adjustedQLong - self.qLong)
             for stock in respSendBOLong[0][0]:
                 respResendBOLong = []
                 tResendBOLong = threading.Thread(target=self.submitOrder, args=[self.qLong, stock, "buy", respResendBOLong])
                 tResendBOLong.start()
                 tResendBOLong.join()
-
+            
         if(self.adjustedQShort > -1):
             self.qShort = int(self.adjustedQShort - self.qShort)
             for stock in respSendBOShort[0][0]:
