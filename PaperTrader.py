@@ -115,65 +115,65 @@ class AlgoTrader:
                         side = "sell"
                     else:
                         side = "buy"
-                respSO = []
-                tSO = threading.Thread(target=self.submitOrder, args=[abs(int(float(position.qty))), position.symbol, side, respSO])
-                tSO.start()
-                tSO.join()
-            else:
-                # Position in short list.
-                if(position.side == "long"):
-                    # Position changed from long to short.  Clear long position to prepare for short position.
-                    side = "sell"
                     respSO = []
-                    tSO = threading.Thread(target=self.submitOrder, args=[int(float(position.qty)), position.symbol, side, respSO])
+                    tSO = threading.Thread(target=self.submitOrder, args=[abs(int(float(position.qty))), position.symbol, side, respSO])
                     tSO.start()
                     tSO.join()
                 else:
-                    if(abs(int(float(position.qty))) == self.qShort):
+                    # Position in short list.
+                    if(position.side == "long"):
+                        # Position changed from long to short.  Clear long position to prepare for short position.
+                        side = "sell"
+                        respSO = []
+                        tSO = threading.Thread(target=self.submitOrder, args=[int(float(position.qty)), position.symbol, side, respSO])
+                        tSO.start()
+                        tSO.join()
+                    else:
+                        if(abs(int(float(position.qty))) == self.qShort):
+                            # Position is where we want it.  Pass for now.
+                            pass
+                        else:
+                            # Need to adjust position amount
+                            diff = abs(int(float(position.qty))) - self.qShort
+                            if(diff > 0):
+                                # Too many short positions.  Buy some back to rebalance.
+                                side = "buy"
+                            else:
+                                # Too little short positions.  Sell some more.
+                                side = "sell"
+                            respSO = []
+                            tSO = threading.Thread(target=self.submitOrder, args=[abs(diff), position.symbol, side, respSO])
+                            tSO.start()
+                            tSO.join()
+                        executed[1].append(position.symbol)
+                        self.blacklist.add(position.symbol)
+            else:
+                # Position in long list.
+                if(position.side == "short"):
+                    # Position changed from short to long.  Clear short position to prepare for long position.
+                    respSO = []
+                    tSO = threading.Thread(target=self.submitOrder, args=[abs(int(float(position.qty))), position.symbol, "buy", respSO])
+                    tSO.start()
+                    tSO.join()
+                else:
+                    if(int(float(position.qty)) == self.qLong):
                         # Position is where we want it.  Pass for now.
                         pass
                     else:
-                        # Need to adjust position amount
-                        diff = abs(int(float(position.qty))) - self.qShort
+                        # Need to adjust position amount.
+                        diff = abs(int(float(position.qty))) - self.qLong
                         if(diff > 0):
-                            # Too many short positions.  Buy some back to rebalance.
-                            side = "buy"
-                        else:
-                            # Too little short positions.  Sell some more.
+                            # Too many long positions.  Sell some to rebalance.
                             side = "sell"
+                        else:
+                            # Too little long positions.  Buy some more.
+                            side = "buy"
                         respSO = []
                         tSO = threading.Thread(target=self.submitOrder, args=[abs(diff), position.symbol, side, respSO])
                         tSO.start()
                         tSO.join()
-                    executed[1].append(position.symbol)
+                    executed[0].append(position.symbol)
                     self.blacklist.add(position.symbol)
-        else:
-            # Position in long list.
-            if(position.side == "short"):
-                # Position changed from short to long.  Clear short position to prepare for long position.
-                respSO = []
-                tSO = threading.Thread(target=self.submitOrder, args=[abs(int(float(position.qty))), position.symbol, "buy", respSO])
-                tSO.start()
-                tSO.join()
-            else:
-                if(int(float(position.qty)) == self.qLong):
-                    # Position is where we want it.  Pass for now.
-                    pass
-                else:
-                    # Need to adjust position amount.
-                    diff = abs(int(float(position.qty))) - self.qLong
-                    if(diff > 0):
-                        # Too many long positions.  Sell some to rebalance.
-                        side = "sell"
-                    else:
-                        # Too little long positions.  Buy some more.
-                        side = "buy"
-                        respSO = []
-                    tSO = threading.Thread(target=self.submitOrder, args=[abs(diff), position.symbol, side, respSO])
-                    tSO.start()
-                    tSO.join()
-                executed[0].append(position.symbol)
-                self.blacklist.add(position.symbol)
 
         # Send orders to all remaining stocks in the long and short list.
         respSendBOLong = []
