@@ -1,11 +1,26 @@
-import requests, json
-import threading
-import time
-import datetime
+import requests, json, sys
 import alpaca_trade_api as tradeapi
-from PaperConfig import * #contains api keys
+import PaperConfig
+# from PaperConfig import * # contains api keys
 
-BASE_URL = "https://paper-api.alpaca.markets" #the main endpoint for requests
-ACCOUNT_URL = "{}/v2/account".format(BASE_URL) #endpoint for account details
-ORDERS_URL = "{}/v2/orders".format(BASE_URL) #endpoint for orders
-HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY} #required for each request
+# FiveMinBarUrl = PaperConfig.BARS_URL + '/5Min?symbols=MSFT'
+# r = requests.get(FiveMinBarUrl, headers=PaperConfig.HEADERS)
+
+symbols = 'AAPL'
+day_bars_url = '{}/day?symbols={}&limit=1000'.format(PaperConfig.BARS_URL, symbols)
+r = requests.get(day_bars_url, headers=PaperConfig.HEADERS)
+print(r)
+
+r = requests.get('https://data.alpaca.markets/v1/bars/day?symbols=AAPL', headers=PaperConfig.HEADERS)
+print(r)
+# symbols = 'MSFT'
+# FiveMinBarUrl = '{}/day?symbols={}&limit=1000'.format(PaperConfig.BARS_URL, symbols)
+# r = requests.get(FiveMinBarUrl, headers=PaperConfig.HEADERS)
+
+# print(json.dumps(r.json(), indent = 4))
+
+# original_stdout = sys.stdout
+# with open('ta.txt', 'w') as f:
+#     sys.stdout = f
+#     print(r)
+#     sys.stdout = original_stdout

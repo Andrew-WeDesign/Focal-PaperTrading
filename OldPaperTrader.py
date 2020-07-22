@@ -1,7 +1,4 @@
 import requests, json
-import threading
-import time
-import datetime
 import alpaca_trade_api as tradeapi
 from PaperConfig import * #contains api keys
 
@@ -17,18 +14,18 @@ def get_account():
     return json.loads(r.content)
 
 #creates a new order
-def create_order(symbol, qty, side, type, time_in_force):
-        data = {
-            "symbol": symbol,
-            "qty": qty,
-            "side": side,
-            "type": type,
-            "time_in_force": time_in_force
-        }
+# def create_order(symbol, qty, side, type, time_in_force):
+#         data = {
+#             "symbol": symbol,
+#             "qty": qty,
+#             "side": side,
+#             "type": type,
+#             "time_in_force": time_in_force
+#         }
 
-        r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
+#         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         
-        return json.loads(r.content)
+#         return json.loads(r.content)
 
 #returns a list of all orders
 def get_orders():
