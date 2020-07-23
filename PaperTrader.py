@@ -1,26 +1,40 @@
-import requests, json, sys
+import requests
+import json
+import btalib
+import config
+import OHLC
+from datetime import datetime
+import pandas as pd
 import alpaca_trade_api as tradeapi
-import PaperConfig
-# from PaperConfig import * # contains api keys
 
-# FiveMinBarUrl = PaperConfig.BARS_URL + '/5Min?symbols=MSFT'
-# r = requests.get(FiveMinBarUrl, headers=PaperConfig.HEADERS)
+class AlgoTrader:
+    # update data at the start of program
+    def __init__(self):
+        # list of all stock tickers we want to track
+        self.symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA',
+        'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW',
+        'OKTA', 'TWTR', 'TM', 'RTN', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM']
+        # tickers is needed to trim [] & ''
+        self.tickers = ','.join(self.symbols)
 
-symbols = 'AAPL'
-day_bars_url = '{}/day?symbols={}&limit=1000'.format(PaperConfig.BARS_URL, symbols)
-r = requests.get(day_bars_url, headers=PaperConfig.HEADERS)
-print(r)
+    def run(self):
+        # check to see if the day to day data is up to date
+        dateNow = datetime.now()
+        dateT = dateNow.strftime('%Y-%m-%d')
+        g = open('Status/LastDayScan.txt', 'r')
+        lastScan = g.read()
+        g.close()
+        if(lastScan != dateT):
+            print('Daily data is out of date, updating data.')
+            OHLC.getDailyData(self)
+            g = open('Status/LastDayScan.txt', 'w+')
+            g.write(dateT)
+            g.close()
+        else:
+            print('Daily data is up to date.')
 
-r = requests.get('https://data.alpaca.markets/v1/bars/day?symbols=AAPL', headers=PaperConfig.HEADERS)
-print(r)
-# symbols = 'MSFT'
-# FiveMinBarUrl = '{}/day?symbols={}&limit=1000'.format(PaperConfig.BARS_URL, symbols)
-# r = requests.get(FiveMinBarUrl, headers=PaperConfig.HEADERS)
+        print('end of run')
 
-# print(json.dumps(r.json(), indent = 4))
 
-# original_stdout = sys.stdout
-# with open('ta.txt', 'w') as f:
-#     sys.stdout = f
-#     print(r)
-#     sys.stdout = original_stdout
+ls = AlgoTrader()
+ls.run()
