@@ -14,7 +14,7 @@ class AlgoTrader:
     def __init__(self):
         self.alpaca = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL, api_version = 'v2')
         
-        stockUniverse = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'RTN', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', ]
+        stockUniverse = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', ]
         # Format the allStocks variable for use in the class.
         self.allStocks = []
         for stock in stockUniverse:
