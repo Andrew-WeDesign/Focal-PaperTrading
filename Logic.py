@@ -36,7 +36,7 @@ def newPosLogic(self, symbols):
                     cData = list[119].get('c')
                     hData = list[119].get('h')
                     oData = list[119].get('o')
-                    if((cData > oData) and ((cData / hData) > 0.90)):
+                    if((cData > oData) and ((cData / hData) < 1.1)):
                         print('placing a long order for {}'.format(symbol))
                         self.long.append(symbol)
                     else:
@@ -48,7 +48,7 @@ def newPosLogic(self, symbols):
                     cData = list[119].get('c')
                     lData = list[119].get('l')
                     oData = list[119].get('o')
-                    if((oData > cData) and ((cData / lData) > 0.98)):
+                    if((oData > cData) and ((cData / lData) > 0.9)):
                         print('placing a short order for {}'.format(symbol))
                         self.short.append(symbol)
                     else:
@@ -71,7 +71,7 @@ def curPosLogic(self):
             if(macd < macdSignal):
                 print('long position should be closed due to cross on macd')
                 Orders.submitOrder(self, position.qty, position.symbol, 'sell')
-            elif((currentPrice/purchasePrice) > 1.02):
+            elif((currentPrice/purchasePrice) > 1.005):
                 print('closing position to realize gains')
                 Orders.submitOrder(self, position.qty, position.symbol, 'sell')
             else:
@@ -82,7 +82,7 @@ def curPosLogic(self):
             if(macd > macdSignal):
                 print('short position should be closed due to cross on macd')
                 Orders.submitOrder(self, position.qty, position.symbol, 'buy')
-            elif((purchasePrice/currentPrice) > 1.02):
+            elif((purchasePrice/currentPrice) > 1.005):
                 print('closing position to realize gains')
                 Orders.submitOrder(self, position.qty, position.symbol, 'buy')
             else:
