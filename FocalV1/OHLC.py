@@ -11,7 +11,7 @@ import alpaca_trade_api as tradeapi
 
 def getDailyData(self):
     # make a request to get data from alpaca
-    dayBarsUrl = '{}/day?symbols={}&limit=200'.format(config.BARS_URL, self.tickers)
+    dayBarsUrl = '{}/day?symbols={}&limit=20'.format(config.BARS_URL, self.tickers)
     r = requests.get(dayBarsUrl, headers=config.HEADERS)
     # format data in JSON for bta-lib analysis
     data = r.json()
@@ -38,14 +38,14 @@ def dayTechAnalysis(symbols):
         df = pd.read_csv('data/DayOHLC/{}.txt'.format(symbol), parse_dates=True, index_col='Date')
         sma5d = btalib.sma(df, period=5)
         df['5 day sma'] = sma5d.df
-        sma200d = btalib.sma(df, period=200)
-        df['200 day sma'] = sma200d.df
-        rsi = btalib.rsi(df)
-        df['rsi'] = rsi.df
-        macd = btalib.macd(df)
-        df['macd'] = macd.df['macd']
-        df['signal'] = macd.df['signal']
-        df['histogram'] = macd.df['histogram']
+        sma20d = btalib.sma(df, period=20)
+        df['20 day sma'] = sma20d.df
+        # rsi = btalib.rsi(df)
+        # df['rsi'] = rsi.df
+        # macd = btalib.macd(df)
+        # df['macd'] = macd.df['macd']
+        # df['signal'] = macd.df['signal']
+        # df['histogram'] = macd.df['histogram']
         df.to_csv(path_or_buf='data/DayOHLC/{}.txt'.format(symbol)) #, index='Date'
     print('Finished generating sma, rsi, macd.')
 

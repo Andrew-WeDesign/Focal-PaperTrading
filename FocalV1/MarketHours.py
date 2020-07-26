@@ -1,13 +1,13 @@
 import requests
 import json
-import time
-import datetime
-import alpaca_trade_api as tradeapi
 import config
 import Orders
 import Logic
+import time
+import datetime
+import alpaca_trade_api as tradeapi
 
-def isOpen(self):
+def marketHours(self):
     # Wait for market to open.
     print("Waiting for market to open...")
     awaitMarketOpen(self)
@@ -15,12 +15,13 @@ def isOpen(self):
     # tAMO.start()
     # tAMO.join()
     print("Market opened.")
+
     # Figure out when the market will close so we can prepare to sell beforehand.
     clock = self.alpaca.get_clock()
     closingTime = clock.next_close.replace(tzinfo=datetime.timezone.utc).timestamp()
     currTime = clock.timestamp.replace(tzinfo=datetime.timezone.utc).timestamp()
     self.timeToClose = closingTime - currTime
-# TODO: leaving this for now, may be removed later
+
     if(self.timeToClose < (60 * 15)):
         # Close all positions when 15 minutes til market close.
         print("Market closing soon.  Closing positions.")
