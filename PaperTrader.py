@@ -31,7 +31,7 @@ class AlgoTrader:
             # algorithm for current positions
             Logic.curPosLogic(self)
             # algorithm for new positions
-            Logic.newPosLogic(self, self.symbols)
+            Logic.newPosLogic(self, config.symbols)
             print('Next loop will run in 1 minutes')
             time.sleep(60)
         print('end of run')

@@ -4,9 +4,11 @@ import config
 import requests
 import json
 from datetime import datetime, timedelta
+import alpaca_trade_api as tradeapi
+
 
 #symbols = ['AAPL', 'DOMO']
-symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TWTR', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM']
+symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 'OKTA', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM']
 # symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA',
 #         'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW',
 #         'OKTA', 'TWTR', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', 'FANG', 
@@ -14,6 +16,7 @@ symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'B
 #         'TWTR', 'EVRG', 'ABMD', 'MSCI', 'TTWO', 'SIVB', 'IPGP', 'HII', 'NCLH', 'CDNS', 
 #         'SBAC', 'IQV', 'MGM', 'RMD', 'AOS', 'PKG', 'DRE', 'BKR', 'HLT', 'RE']
 # tickers is needed to trim [] & ''
+alpaca = tradeapi.REST(config.API_KEY, config.SECRET_KEY, config.BASE_URL, api_version = 'v2')
 tickers = ','.join(symbols)
 
 ##########################################################
@@ -110,11 +113,33 @@ dt = datetime.today()
 dtt = dt.strftime('%Y-%m-%d')
 for symbol in symbols:
     df = pd.read_csv('data/DayOHLC/{}.txt'.format(symbol), parse_dates=True) #, index_col='Date'
-    a = df.loc[(df['Date'] == dt), ('5 day sma')].values
-    b = df.loc[(df['Date'] == dt), ('200 day sma')].values
+    # a = df.loc[(df['Date'] == dt), ('5 day sma')].values
+    # b = df.loc[(df['Date'] == dt), ('200 day sma')].values
+
+    calEnd = datetime.today()
+    tDelta = timedelta(days=1)
+    calEnd = calEnd - tDelta
+    tDelta = timedelta(days=7)
+    calStart = calEnd - tDelta
+    calEnd = calEnd.strftime('%Y-%m-%d')
+    calStart = calStart
+    calendar = alpaca.get_calendar(start=calStart, end=calEnd)
+
+    lastOpenDay = calendar[-1].date
+    lastOpenDay = lastOpenDay.strftime('%Y-%m-%d')
+    print(lastOpenDay)
+    a = df.loc[(df['Date'] == lastOpenDay), ('macd')].values
+    b = df.loc[(df['Date'] == lastOpenDay), ('signal')].values
+
+    #print(df.loc[(df['Date'] == lastOpenDay), ('macd')].values)
+    print(a)
+    #print(df.loc[(df['Date'] == lastOpenDay), ('signal')].values)
+    print(b)
+    print(symbol)
+
     # gather all buy signals to send to alpaca through Orders.submitOrder(self, qty, stock, side, resp)
     if(a < b):
-        with open('data/15MinOHLC/{}.json'.format(symbol)) as f:
+        with open('data/1MinOHLC/{}.json'.format(symbol)) as f:
             data = json.load(f)
             list=data['{}'.format(symbol)]
             cData = list[1].get('c')
@@ -125,8 +150,8 @@ for symbol in symbols:
                 long.append(symbol)
             else:
                 print('not a signal')
-    else:
-        with open('data/15MinOHLC/{}.json'.format(symbol)) as f:
+    elif(b > a):
+        with open('data/1MinOHLC/{}.json'.format(symbol)) as f:
             data = json.load(f)
             list=data['{}'.format(symbol)]
             cData = list[1].get('c')
@@ -140,6 +165,9 @@ for symbol in symbols:
 
 print(long)
 print(short)
+
+#print(df.loc[(df['Date'] == lastOpenDay), ('macd')].values)
+#print(df.loc[(df['Date'] == lastOpenDay), ('signal')].values)
 
 ##########################################################
 

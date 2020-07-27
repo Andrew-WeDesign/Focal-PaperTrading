@@ -15,8 +15,12 @@ for position in positions:
     symbol = position.symbol
     qty = position.qty
     qty = abs(int(qty))
-    alpaca.submit_order(symbol, qty, side, "market", "day")
+    #alpaca.submit_order(symbol, qty, side, "market", "day")
     print("Market order of | " + str(qty) + " " + symbol + " " + side + " | completed.")
+print(positions)
+print('end of part 1')
+positions = requests.get('https://paper-api.alpaca.markets/v2/positions', headers = config.HEADERS)
+print(positions)
 #submitOrder(self, qty, symbol, side)
 # if(int(qty) > 0):
 #     try:
