@@ -19,6 +19,7 @@ class AlgoTrader:
         self.tickers = ','.join(config.symbols)
 
     def run(self):
+        # get day by day data that will not have updates throughout the day
         DataGather.startOfDay(self)
         while True:
             # check for market open
@@ -31,7 +32,7 @@ class AlgoTrader:
             Logic.curPosLogic(self)
             # algorithm for new positions
             Logic.newPosLogic(self, self.symbols)
-            print('Next loop will run in 5 minutes.')
+            print('Next loop will run in 1 minutes')
             time.sleep(60)
         print('end of run')
 

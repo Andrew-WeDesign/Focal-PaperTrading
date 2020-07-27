@@ -14,4 +14,9 @@ symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'B
 'OKTA', 'TWTR', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', 'FANG', 
 'MXIM', 'JKHY', 'KEYS', 'FTNT', 'ROL', 'ANET', 'CPRT', 'FLT', 'HFC', 'BR', 
 'TWTR', 'EVRG', 'ABMD', 'MSCI', 'TTWO', 'SIVB', 'IPGP', 'HII', 'NCLH', 'CDNS', 
-'SBAC', 'IQV', 'MGM', 'RMD', 'AOS', 'PKG', 'DRE', 'BKR', 'HLT', 'RE']
+'SBAC', 'IQV', 'MGM', 'RMD', 'AOS', 'PKG', 'DRE', 'BKR', 'HLT', 'RE',
+'OCUL', 'EVRI', 'FNKO', 'HEAR', 'FIT', 'BABA', 'F', 'SBUX',
+'NGM', 'FLXN', 'VKTX', 'CHNG', 'EPD', 'ELY', 'VST', 'MTNB',
+'BTG', 'GDP', 'PFNX', 'CECE']
+
+# axed symbols: CFPZF ARDS CHPRF CRPB GELYF TCNNF TDS PROSY GOPRO
