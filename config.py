@@ -9,14 +9,14 @@ ORDERS_URL = '{}/v2/orders'.format(BASE_URL) #endpoint for orders
 BARS_URL = 'https://data.alpaca.markets/v1/bars'
 
 # list of all stock tickers we want to track
-symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA',
-'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW',
+symbols = ['DOMO', 'TLRY', 'SQ', 'MRO', 'AAPL', 'GM', 'SNAP', 'SHOP', 'SPLK', 'BA', 
+'AMZN', 'SUI', 'SUN', 'TSLA', 'CGC', 'SPWR', 'NIO', 'CAT', 'MSFT', 'PANW', 
 'OKTA', 'TWTR', 'TM', 'ATVI', 'GS', 'BAC', 'MS', 'TWLO', 'QCOM', 'FANG', 
 'MXIM', 'JKHY', 'KEYS', 'FTNT', 'ROL', 'ANET', 'CPRT', 'FLT', 'HFC', 'BR', 
 'TWTR', 'EVRG', 'ABMD', 'MSCI', 'TTWO', 'SIVB', 'IPGP', 'HII', 'NCLH', 'CDNS', 
-'SBAC', 'IQV', 'MGM', 'RMD', 'AOS', 'PKG', 'DRE', 'BKR', 'HLT', 'RE',
-'OCUL', 'EVRI', 'FNKO', 'HEAR', 'FIT', 'BABA', 'F', 'SBUX',
-'NGM', 'FLXN', 'VKTX', 'CHNG', 'EPD', 'ELY', 'VST', 'MTNB',
-'BTG', 'GDP', 'PFNX', 'CECE']
+'SBAC', 'IQV', 'MGM', 'RMD', 'AOS', 'PKG', 'DRE', 'BKR', 'HLT', 'RE', 
+'OCUL', 'EVRI', 'FNKO', 'HEAR', 'FIT', 'BABA', 'F', 'SBUX', #8
+'NGM', 'FLXN', 'VKTX', 'CHNG', 'EPD', 'ELY', 'VST', 'MTNB', #8
+'BTG', 'GDP', 'PFNX', 'CECE'] #4
 
 # axed symbols: CFPZF ARDS CHPRF CRPB GELYF TCNNF TDS PROSY GOPRO
