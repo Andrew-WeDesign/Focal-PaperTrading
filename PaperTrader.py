@@ -28,11 +28,12 @@ class AlgoTrader:
             self.alpaca.cancel_all_orders()
             # get new data 
             DataGather.getOneMinData(self)
+            DataGather.minuteTechAnalysis(self)
             # algorithm for current positions
             Logic.curPosLogic(self)
             # algorithm for new positions
             Logic.newPosLogic(self, config.symbols)
-            print('Next loop will run in 1 minutes')
+            print('Next loop will run in 1 minute')
             time.sleep(60)
         print('end of run')
 

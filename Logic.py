@@ -18,19 +18,21 @@ def newPosLogic(self, symbols):
     blacklist = set()
     for position in positions:
         blacklist.add(position.symbol)
-    calEnd = datetime.today()
-    tDelta = timedelta(days=1)
-    calEnd = calEnd - tDelta
-    tDelta = timedelta(days=7)
-    calStart = calEnd - tDelta
-    calEnd = calEnd.strftime('%Y-%m-%d')
-    calStart = calStart
-    calendar = self.alpaca.get_calendar(start=calStart, end=calEnd)
-    lastOpenDay = calendar[-1].date
-    lastOpenDay = lastOpenDay.strftime('%Y-%m-%d')
+    # calEnd = datetime.today()
+    # tDelta = timedelta(days=1)
+    # calEnd = calEnd - tDelta
+    # tDelta = timedelta(days=7)
+    # calStart = calEnd - tDelta
+    # calEnd = calEnd.strftime('%Y-%m-%d')
+    # calStart = calStart
+    # calendar = self.alpaca.get_calendar(start=calStart, end=calEnd)
+    # lastOpenDay = calendar[-1].date
+    # lastOpenDay = lastOpenDay.strftime('%Y-%m-%d')
+    dt = datetime.today()
+    lastOpenDay = dt.strftime('%Y-%m-%d')
     for symbol in config.symbols:
         if(blacklist.isdisjoint({symbol})):
-            df = pd.read_csv('data/DayOHLC/{}.txt'.format(symbol), parse_dates=True) #, index_col='Date'
+            df = pd.read_csv('data/1MinMACD/{}.txt'.format(symbol), parse_dates=True) #, index_col='Date'
             a = df.loc[(df['Date'] == lastOpenDay), ('macd')].values
             b = df.loc[(df['Date'] == lastOpenDay), ('signal')].values
             # gather all buy signals to send to alpaca through Orders.submitOrder(self, qty, stock, side, resp)
@@ -41,7 +43,7 @@ def newPosLogic(self, symbols):
                     cData = list[119].get('c')
                     hData = list[119].get('h')
                     oData = list[119].get('o')
-                    if((cData < oData) and ((cData / hData) < 1.1)):
+                    if((cData > oData) and ((cData / hData) < 1.1)):
                         print('placing a long order for {}'.format(symbol))
                         self.long.append(symbol)
                     else:
@@ -53,7 +55,7 @@ def newPosLogic(self, symbols):
                     cData = list[119].get('c')
                     lData = list[119].get('l')
                     oData = list[119].get('o')
-                    if((oData < cData) and ((cData / lData) > 0.9)):
+                    if((oData > cData) and ((cData / lData) > 0.9)):
                         print('placing a short order for {}'.format(symbol))
                         self.short.append(symbol)
                     else:
@@ -67,7 +69,7 @@ def curPosLogic(self):
     dt = dt.strftime('%Y-%m-%d')
     positions = self.alpaca.list_positions()
     for position in positions:
-        df = pd.read_csv('data/DayOHLC/{}.txt'.format(position.symbol), parse_dates=True)
+        df = pd.read_csv('data/1MinMACD/{}.txt'.format(position.symbol), parse_dates=True)
         macd = df.loc[(df['Date'] == dt), ('macd')].values
         macdSignal = df.loc[(df['Date'] == dt), ('signal')].values
         if(position.side == 'long'):
@@ -77,11 +79,11 @@ def curPosLogic(self):
                 print('long position should be closed due to cross on macd')
                 qty = int(position.qty)
                 Orders.submitOrder(self, qty, position.symbol, 'sell')
-            elif((currentPrice/purchasePrice) > 1.01):
+            elif((currentPrice/purchasePrice) > 1.02):
                 print('closing {} position to realize gains'.format(position.symbol))
                 qty = int(position.qty)
                 Orders.submitOrder(self, qty, position.symbol, 'sell')
-            elif((currentPrice/purchasePrice) < 0.995):
+            elif((currentPrice/purchasePrice) < 0.99):
                 print('closing {} position to realize losses'.format(position.symbol))
                 qty = int(position.qty)
                 Orders.submitOrder(self, qty, position.symbol, 'sell')
@@ -94,11 +96,11 @@ def curPosLogic(self):
                 print('short position should be closed due to cross on macd')
                 qty = abs(int(position.qty))
                 Orders.submitOrder(self, qty, position.symbol, 'buy')
-            elif((purchasePrice/currentPrice) > 1.01):
+            elif((purchasePrice/currentPrice) > 1.02):
                 print('closing {} position to realize gains'.format(position.symbol))
                 qty = abs(int(position.qty))
                 Orders.submitOrder(self, qty, position.symbol, 'buy')
-            elif((purchasePrice/currentPrice) < 0.995):
+            elif((purchasePrice/currentPrice) < 0.99):
                 print('closing {} position to realize losses'.format(position.symbol))
                 qty = abs(int(position.qty))
                 Orders.submitOrder(self, qty, position.symbol, 'buy')

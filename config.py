@@ -1,5 +1,5 @@
-API_KEY = 'PK24DPNBTW93BURSH6KR'
-SECRET_KEY = 'm34lUIrYuHImdnAvoV7jE6BsE7G5yVPAdtiGImHA'
+API_KEY = 'PK49VKYT6HI5BCIAN59Q'
+SECRET_KEY = 'H8YBCvXCOx309jJeB6/znEjid5xfNOW/fih8coFz'
 HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY} #required for each request
 
 BASE_URL = 'https://paper-api.alpaca.markets' #the main endpoint for requests

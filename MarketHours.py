@@ -21,7 +21,7 @@ def isOpen(self):
     currTime = clock.timestamp.replace(tzinfo=datetime.timezone.utc).timestamp()
     self.timeToClose = closingTime - currTime
 # TODO: leaving this for now, may be removed later
-    if(self.timeToClose < (60 * 15)):
+    if(self.timeToClose < (60 * 16)):
         # Close all positions when 15 minutes til market close.
         print("Market closing soon.  Closing positions.")
         positions = self.alpaca.list_positions()
@@ -31,8 +31,9 @@ def isOpen(self):
             else:
                 orderSide = 'buy'
             qty = abs(int(float(position.qty)))
-            respSO = []
-            Orders.submitOrder(qty, position.symbol, orderSide, respSO)
+            # qty = position.qty
+            # respSO = []
+            Orders.submitOrder(self, qty, position.symbol, orderSide)
             # tSubmitOrder = threading.Thread(target=self.submitOrder(qty, position.symbol, orderSide, respSO))
             # tSubmitOrder.start()
             # tSubmitOrder.join()

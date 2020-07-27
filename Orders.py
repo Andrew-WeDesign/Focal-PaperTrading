@@ -35,6 +35,8 @@ def orderSize(self, long, short):
             qty = int(float(longSplit / cData))
         elif(longSplit > pCheck):
             qty = int(float(pCheck / cData))
+        else:
+            qty = int(float(pCheck / cData))
         side = 'buy'
         submitOrder(self, qty, symbol, side)
     for symbol in short:
