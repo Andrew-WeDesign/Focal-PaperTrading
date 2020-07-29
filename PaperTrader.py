@@ -12,7 +12,6 @@ import DataGather
 import Orders
 
 class AlgoTrader:
-    # update data at the start of program
     def __init__(self):
         self.alpaca = tradeapi.REST(config.API_KEY, config.SECRET_KEY, config.BASE_URL, api_version = 'v2')
         # tickers is needed to trim [] & '' off symbols
@@ -20,15 +19,16 @@ class AlgoTrader:
 
     def run(self):
         # get day by day data that will not have updates throughout the day
-        DataGather.startOfDay(self)
+        # DataGather.startOfDay(self)
         while True:
             # check for market open
             MarketHours.isOpen(self)
             # cancel any open orders
             self.alpaca.cancel_all_orders()
             # get new data 
-            DataGather.getOneMinData(self)
-            DataGather.minuteTechAnalysis(self)
+            # DataGather.getOneMinData(self)
+            # DataGather.minuteTechAnalysis(self)
+            DataGather.getFftnMinData(self)
             # algorithm for current positions
             Logic.curPosLogic(self)
             # algorithm for new positions
