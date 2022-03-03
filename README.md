@@ -6,7 +6,7 @@ Using HTTP Get and Post requests in python to get data, process the data into co
 What does it use?
 The core of this project uses 2 libraries: Alpaca's trading API and btalib.
 
-How does it work?
+How does it work?/n
 All data is stored into JSON files locally (used json as I was planning on using MongoDB in the future versions) and from that data algorithms determine if different types stock indicators (Trending, Volume, Momentum, and Volitility) create a buy or sell signal
 
 Does it make money?
